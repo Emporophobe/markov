@@ -1,18 +1,33 @@
 import random                                                               #brings in premade code for random numbers etc
+import cPickle as pickle
+import os.path
 
-corpus = 'sarnath.txt'                                                      #select a file from which to generate the database
-text = open(corpus, 'r')                                                    #load the text file in the program so it may be used
+def getCorpus():
+    corpus = raw_input("Corpus text: ")
+    if corpus[-4] == '.':
+        corpus = corpus[0:-4]
+    try:
+        return open(corpus+'.txt', 'r'), corpus                             #load the text file in the program so it may be used
+    except IOError:
+        print 'No such .txt file. Try again.'
+        getCorpus()
+
+text, corpus = getCorpus()
 
 wordlist = text.read().split()                                              #splits the raw text into individual words
 database = {}                                                               #creates an empty dictionary
 
-for i in range(len(wordlist)-2):                                            #do the following to every item in the word list except the last two
-    w1, w2, w3 = (wordlist[i], wordlist[i+1], wordlist[i+2])                #give the names w1, w2, and w3 to the next three words in the list
-    key = (w1, w2)                                                          #the first two words are the 'key' to a dictionary; the third is the corresponding entry
-    if key in database.keys():                                              #if the key is already in the list of word pairs
-        database[key].append(w3)                                            #   then add the following word to the list of all possible following words
-    else:                                                                   #if the key is not in the list
-        database[key] = [w3]                                                #   add the key, and the following word is its first entry
+if os.path.exists(corpus + '.p'):
+    database = pickle.load(open(corpus+'.p'))
+else:
+    for i in range(len(wordlist)-2):                                        #do the following to every item in the word list except the last two
+        w1, w2, w3 = (wordlist[i], wordlist[i+1], wordlist[i+2])            #give the names w1, w2, and w3 to the next three words in the list
+        key = (w1, w2)                                                      #the first two words are the 'key' to a dictionary; the third is the corresponding entry
+        if key in database.keys():                                          #if the key is already in the list of word pairs
+            database[key].append(w3)                                        #   then add the following word to the list of all possible following words
+        else:                                                               #if the key is not in the list
+            database[key] = [w3]                                            #   add the key, and the following word is its first entry
+    pickle.dump(database, open(corpus+'.p', 'r'))
 
 seed = database.keys()[random.randint(0, len(database.keys())-1)]           #pick a random key from the dictionary
 
