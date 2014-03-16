@@ -4,7 +4,7 @@ import os.path                                                              #cod
 
 def getCorpus():                                                            #define a function to select a text file
     corpus = raw_input("Corpus text: ")                                     #have the user specify a text file
-    if corpus[-4] == '.':                                                   #check to see if the 4th to last character is a '.'(eg example.txt)
+    if len(corpus) < 4 or corpus[-4] == '.':                                #check to see if the 4th to last character is a '.'(eg example.txt)
         corpus = corpus[0:-4]                                               #   if the above is true, remove the last 4 characters (.txt)
     try:                                                                    #try to do the following, unless there is an error:
         return open(corpus+'.txt', 'r'), corpus                             #   load the text file in the program so it may be used
@@ -31,7 +31,7 @@ else:                                                                       #oth
 
 seed = database.keys()[random.randint(0, len(database.keys())-1)]           #pick a random key from the dictionary
 
-stringlength = raw_input('How many words? ')                                #this is the maximum number of words generated as defined by the user
+stringlength = int(raw_input('How many words? '))                                #this is the maximum number of words generated as defined by the user
 gentext = []                                                                #this is an empty list that will contain the generated words in order
 
 while len(gentext) < stringlength:                                          #while the number of words generated is less than the maximum, repeat this:
